@@ -54,4 +54,16 @@ public class AppTest {
 
         assertEquals(500, deposito.gettAditivo());
     }
+
+    @Test
+    public void recebeGasolinaEDevolveMenosUm() {
+        //Arrange
+        DepComb deposito = new DepComb(400,5000,50,50);
+        //Act
+        int result = deposito.recebeGasolina(-1);
+        //Assert
+        assertEquals(-1, result);
+    }
+
+
 }

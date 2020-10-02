@@ -65,7 +65,16 @@ public class DepComb {
         if (qtdade < 0) {
             return -1;
         }
-        return qtdade;
+        if (qtdade + tGasolina <= MAX_ADITIVO) {
+            tGasolina += qtdade;
+            return qtdade;
+        }
+        if (qtdade + tGasolina > MAX_ADITIVO) {
+            int tGasolinaOld = tGasolina;
+            tGasolina = MAX_ADITIVO;
+            return MAX_ADITIVO - tGasolinaOld;
+        }
+        return -1;
     }
 
     public int recebeAlcool(int qtdade) {
