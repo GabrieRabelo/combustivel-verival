@@ -18,7 +18,7 @@ public class AppTest {
         assertTrue(true);
     }
 
-
+    /* ********** recebe Aditivo ********** */
     @Test
     public void recebeAditivoEDeveriaRetornarMenosUm() {
         //Arrange
@@ -55,15 +55,41 @@ public class AppTest {
         assertEquals(500, deposito.gettAditivo());
     }
 
+    /* ********** recebe Gasolina ********** */
     @Test
     public void recebeGasolinaEDevolveMenosUm() {
         //Arrange
-        DepComb deposito = new DepComb(400,5000,50,50);
+        DepComb deposito = new DepComb(400, 5000, 50, 50);
         //Act
         int result = deposito.recebeGasolina(-1);
         //Assert
         assertEquals(-1, result);
     }
+
+    @Test
+    public void recebeGasolinaEDeveriaRetornarQuantidade() {
+        //Arrange
+        DepComb deposito = new DepComb(400, 4500, 50, 50);
+        //Act
+        int result = deposito.recebeGasolina(5000);
+        //Assert
+        assertEquals(5000, result);
+
+        assertEquals(9500, deposito.gettGasolina());
+    }
+
+    @Test
+    public void recebeGasolinaEDeveriaRetornaSobra() {
+        //Arrange
+        DepComb deposito = new DepComb(400, 6000, 50, 50);
+        //Act
+        int result = deposito.recebeGasolina(5000);
+        //Assert
+        assertEquals(4000, result);
+
+        assertEquals(10000, deposito.gettGasolina());
+    }
+    /* ********** recebe Alcool ********** */
 
 
 }

@@ -65,14 +65,14 @@ public class DepComb {
         if (qtdade < 0) {
             return -1;
         }
-        if (qtdade + tGasolina <= MAX_ADITIVO) {
+        if (qtdade + tGasolina <= MAX_GASOLINA) {
             tGasolina += qtdade;
             return qtdade;
         }
-        if (qtdade + tGasolina > MAX_ADITIVO) {
+        if (qtdade + tGasolina > MAX_GASOLINA) {
             int tGasolinaOld = tGasolina;
-            tGasolina = MAX_ADITIVO;
-            return MAX_ADITIVO - tGasolinaOld;
+            tGasolina = MAX_GASOLINA;
+            return MAX_GASOLINA - tGasolinaOld;
         }
         return -1;
     }
