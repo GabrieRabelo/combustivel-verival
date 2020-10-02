@@ -81,7 +81,16 @@ public class DepComb {
         if (qtdade < 0) {
             return -1;
         }
-        return qtdade;
+        if (qtdade + tAlcool <= MAX_ALCOOL) {
+            tAlcool += qtdade;
+            return qtdade;
+        }
+        if (qtdade + tAlcool > MAX_ALCOOL) {
+            int tAlcoo1old = tAlcool;
+            tAlcool = MAX_ALCOOL;
+            return MAX_ALCOOL - tAlcoolold;
+        }
+        return -1;
     }
 
     public int[] encomendaCombustivel(int qtdade, TIPOPOSTO tipoPosto) {

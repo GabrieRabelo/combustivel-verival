@@ -89,7 +89,17 @@ public class AppTest {
 
         assertEquals(10000, deposito.gettGasolina());
     }
-    /* ********** recebe Alcool ********** */
 
+    /* ********** recebe Alcool ********** */
+    @Test
+    public void recebeAlcool1EDeveriaRetornarMenosUm() {
+        //Arrange
+        DepComb deposito = new DepComb(400, 400, 500, 100);
+        //Act
+        int result = deposito.recebeAlcool(-1);
+        //Assert
+        assertEquals(-1, result);
+
+    }
 
 }
