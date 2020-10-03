@@ -81,13 +81,16 @@ public class DepComb {
         if (qtdade < 0) {
             return -1;
         }
+        int tAlcool = tAlcool1 + tAlcool2;
         if (qtdade + tAlcool <= MAX_ALCOOL) {
-            tAlcool += qtdade;
+            tAlcool1 += (double) qtdade/2;
+            tAlcool2 += (double) qtdade/2;
             return qtdade;
         }
         if (qtdade + tAlcool > MAX_ALCOOL) {
-            int tAlcoo1old = tAlcool;
-            tAlcool = MAX_ALCOOL;
+            int tAlcoolold = tAlcool1 + tAlcool2;
+            tAlcool1 = MAX_ALCOOL;
+            tAlcool2 = MAX_ALCOOL;
             return MAX_ALCOOL - tAlcoolold;
         }
         return -1;

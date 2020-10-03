@@ -1,26 +1,18 @@
 package com.quarteto.o;
 
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for simple App.
  */
-public class AppTest {
-    /**
-     * Rigorous Test :-)
-     */
+class AppTest {
+    @DisplayName("Aditivo - Deveria retornar -1 ao receber quantidade inválida")
     @Test
-    public void shouldAnswerWithTrue() {
-        assertTrue(true);
-    }
-
-    /* ********** recebe Aditivo ********** */
-    @Test
-    public void recebeAditivoEDeveriaRetornarMenosUm() {
+    void recebeAditivoEDeveriaRetornarMenosUm() {
         //Arrange
         DepComb deposito = new DepComb(400, 400, 500, 100);
         //Act
@@ -30,8 +22,9 @@ public class AppTest {
 
     }
 
+    @DisplayName("Aditivo - Deveria retornar a quantidade adicionada com sucesso")
     @Test
-    public void recebeAditivoEDeveriaRetornarQuantidade() {
+    void recebeAditivoEDeveriaRetornarQuantidade() {
         //Arrange
         DepComb deposito = new DepComb(430, 50, 50, 50);
         //Act
@@ -40,11 +33,11 @@ public class AppTest {
         assertEquals(50, result);
 
         assertEquals(480, deposito.gettAditivo());
-
     }
 
+    @DisplayName("Aditivo - Deveria retornar a quantidade adicionada sem a sobra.")
     @Test
-    public void recebeAditivoEDeveriaRetornarASobra() {
+    void recebeAditivoEDeveriaRetornarSemASobra() {
         //Arrange
         DepComb deposito = new DepComb(400, 50, 50, 50);
         //Act
@@ -55,9 +48,9 @@ public class AppTest {
         assertEquals(500, deposito.gettAditivo());
     }
 
-    /* ********** recebe Gasolina ********** */
+    @DisplayName("Gasolina - Deveria retornar -1 ao receber quantidade inválida")
     @Test
-    public void recebeGasolinaEDevolveMenosUm() {
+    void recebeGasolinaEDevolveMenosUm() {
         //Arrange
         DepComb deposito = new DepComb(400, 5000, 50, 50);
         //Act
@@ -66,8 +59,9 @@ public class AppTest {
         assertEquals(-1, result);
     }
 
+    @DisplayName("Gasolina - Deveria retornar a quantidade adicionada com sucesso")
     @Test
-    public void recebeGasolinaEDeveriaRetornarQuantidade() {
+    void recebeGasolinaEDeveriaRetornarQuantidade() {
         //Arrange
         DepComb deposito = new DepComb(400, 4500, 50, 50);
         //Act
@@ -78,28 +72,55 @@ public class AppTest {
         assertEquals(9500, deposito.gettGasolina());
     }
 
+    @DisplayName("Gasolina - Deveria retornar a quantidade adicionada sem a sobra.")
     @Test
-    public void recebeGasolinaEDeveriaRetornaSobra() {
+    void recebeGasolinaEDeveriaRetornaSemASobra() {
         //Arrange
         DepComb deposito = new DepComb(400, 6000, 50, 50);
         //Act
-        int result = deposito.recebeGasolina(5000);
+        int result = deposito.recebeGasolina(6000);
         //Assert
         assertEquals(4000, result);
 
         assertEquals(10000, deposito.gettGasolina());
     }
 
-    /* ********** recebe Alcool ********** */
+    @DisplayName("Alcool - Deveria retornar -1 ao receber quantidade inválida")
     @Test
-    public void recebeAlcool1EDeveriaRetornarMenosUm() {
+    void recebeAlcoolInvalidoEDeveriaRetornarMenosUm() {
         //Arrange
         DepComb deposito = new DepComb(400, 400, 500, 100);
         //Act
         int result = deposito.recebeAlcool(-1);
         //Assert
         assertEquals(-1, result);
-
     }
 
+    @DisplayName("Alcool - Deveria retornar a quantidade adicionada com sucesso")
+    @Test
+    void recebeAlcoolEDeveriaRetornarQuantidade() {
+        //Arrange
+        DepComb deposito = new DepComb(430, 50, 800, 800);
+        //Act
+        int result = deposito.recebeAlcool(100);
+        //Assert
+        assertEquals(100, result);
+
+        assertEquals(850, deposito.gettAlcool1());
+        assertEquals(850, deposito.gettAlcool2());
+    }
+
+    @DisplayName("Alcool - Deveria retornar a quantidade adicionada sem a sobra.")
+    @Test
+    void recebeAlcoolEDeveriaRetornaSemASobra() {
+        //Arrange
+        DepComb deposito = new DepComb(400, 6000, 1000, 1000);
+        //Act
+        int result = deposito.recebeAlcool(2500);
+        //Assert
+        assertEquals(500, result);
+
+        assertEquals(2500, deposito.gettAlcool1());
+        assertEquals(2500, deposito.gettAlcool2());
+    }
 }
