@@ -122,12 +122,33 @@ class AppTest {
         assertEquals(2500, deposito.gettAlcool1());
         assertEquals(2500, deposito.gettAlcool2());
     }
+    @DisplayName("Define situaçao - Deveria modificar para normal.")
+    @Test
+    void defineSituacaoDeveriaModificarParaNormal(){
 
-    void defineSituacaoDeveriaModificarDeNormalParaNormal(){
+        DepComb deposito = new DepComb(450, 8000, 750, 750);
 
-        DepComb deposito = new DepComb(400, 6000, 1000, 1000);
-
-        deposito.defineSituacao();
         var situacao = deposito.getSituacao();
+        assertEquals(DepComb.SITUACAO.NORMAL, situacao);
+    }
+
+    @DisplayName("Define situaçao - Deveria modificar para sobreaviso.")
+    @Test
+    void defineSituacaoDeveriaModificarParaSobreaviso(){
+
+        DepComb deposito = new DepComb(450, 4500, 750, 750);
+
+        var situacao = deposito.getSituacao();
+        assertEquals(DepComb.SITUACAO.SOBRAVISO, situacao);
+    }
+
+    @DisplayName("Define situaçao - Deveria modificar para emergencia.")
+    @Test
+    void defineSituacaoDeveriaModificarParaEmergencia(){
+
+        DepComb deposito = new DepComb(450, 2000, 750, 750);
+
+        var situacao = deposito.getSituacao();
+        assertEquals(DepComb.SITUACAO.EMERGENCIA, situacao);
     }
 }
