@@ -119,8 +119,15 @@ class AppTest {
         int result = deposito.recebeAlcool(2500);
         //Assert
         assertEquals(500, result);
-
         assertEquals(2500, deposito.gettAlcool1());
         assertEquals(2500, deposito.gettAlcool2());
+    }
+
+    void defineSituacaoDeveriaModificarDeNormalParaNormal(){
+
+        DepComb deposito = new DepComb(400, 6000, 1000, 1000);
+
+        deposito.defineSituacao();
+        var situacao = deposito.getSituacao();
     }
 }

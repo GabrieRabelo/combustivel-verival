@@ -1,5 +1,9 @@
 package com.quarteto.o;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class DepComb {
 
     public enum SITUACAO {NORMAL, SOBRAVISO, EMERGENCIA}
@@ -20,10 +24,21 @@ public class DepComb {
         this.tGasolina = tGasolina;
         this.tAlcool1 = tAlcool1;
         this.tAlcool2 = tAlcool2;
+        defineSituacao();
     }
 
     public void defineSituacao() {
+        double menor = procuraMaisEscasso();
     }
+
+    private double procuraMaisEscasso() {
+        List<Double> combustiveis = new ArrayList<>();
+        combustiveis.add((double)tAditivo/MAX_ADITIVO);
+        combustiveis.add((double)tGasolina/MAX_GASOLINA);
+        combustiveis.add((double)(tAlcool1+tAlcool2)/MAX_ALCOOL);
+        return Collections.min(combustiveis);
+    }
+
 
     public SITUACAO getSituacao() {
         return null;
