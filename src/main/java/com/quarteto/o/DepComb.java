@@ -126,6 +126,30 @@ public class DepComb {
     }
 
     public int[] encomendaCombustivel(int qtdade, TIPOPOSTO tipoPosto) {
-        return new int[]{-1};
+        int[] erro = new int[1];
+        int[] remanescente = new int[4];
+        if(qtdade < 0){
+            erro[0] = -1;
+            return erro;
+        }
+        if(situacao == SITUACAO.NORMAL){
+            double qtdadeAditivo = qtdade * 0.05;
+            double qtdadeGasolina = qtdade * 0.7;
+            double qtdadeAlcool = qtdade * 0.25;
+
+            if((tGasolina - qtdadeGasolina) > 0 && ((tAlcool1 + tAlcool2) - qtdadeAlcool) > 0 && (tAditivo - qtdadeAditivo) > 0) {
+                tAditivo -= qtdadeAditivo;
+                tGasolina -= qtdadeGasolina;
+                tAlcool1 -= qtdadeAlcool/2;
+                tAlcool2 -= qtdadeAlcool/2;
+                remanescente[0] = tAditivo;
+                remanescente[1] = tGasolina;
+                remanescente[2] = tAlcool1;
+                remanescente[3] = tAlcool2;
+                return remanescente;
+            }
+        }
+
+        return new int[]{200, 200};
     }
 }

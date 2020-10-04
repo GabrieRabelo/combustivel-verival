@@ -4,6 +4,7 @@ package com.quarteto.o;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.quarteto.o.DepComb.SITUACAO.NORMAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -129,7 +130,7 @@ class AppTest {
         DepComb deposito = new DepComb(450, 8000, 750, 750);
 
         var situacao = deposito.getSituacao();
-        assertEquals(DepComb.SITUACAO.NORMAL, situacao);
+        assertEquals(NORMAL, situacao);
     }
 
     @DisplayName("Define situaçao - Deveria modificar para sobreaviso.")
@@ -151,4 +152,31 @@ class AppTest {
         var situacao = deposito.getSituacao();
         assertEquals(DepComb.SITUACAO.EMERGENCIA, situacao);
     }
+
+    @DisplayName("Encomenda - Deveria retonar código de erro -1.")
+    @Test
+    void encomendaCombustivelDeveRetornarVetorComCodigoMenosUm(){
+        DepComb deposito = new DepComb(400, 8000, 1000, 1000);
+
+        int[] result = deposito.encomendaCombustivel(-1, DepComb.TIPOPOSTO.COMUM);
+
+        int[] expected = new int[] {-1};
+        assertEquals(expected[0], result[0]);
+    }
+
+    @DisplayName("Encomenda - Deveria retonar vetor com combustivel remanescente.")
+    @Test
+    void encomendaCombustivelDeveRetornarVetorComCombustivelRemanescente(){
+        DepComb deposito = new DepComb(400, 8000, 1000, 1000);
+
+        int[] result = deposito.encomendaCombustivel(2000, DepComb.TIPOPOSTO.COMUM);
+
+        int[] expected = new int[] {300, 6600, 750, 750};
+
+        assertEquals(expected[0], result[0]);
+        assertEquals(expected[1], result[1]);
+        assertEquals(expected[2], result[2]);
+        assertEquals(expected[3], result[3]);
+    }
+
 }
