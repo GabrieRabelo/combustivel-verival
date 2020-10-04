@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit test for simple App.
  */
-class AppTest {
+class DepCombTest {
     @DisplayName("Aditivo - Deveria retornar -1 ao receber quantidade inválida")
     @Test
     void recebeAditivoEDeveriaRetornarMenosUm() {
@@ -177,6 +177,114 @@ class AppTest {
         assertEquals(expected[1], result[1]);
         assertEquals(expected[2], result[2]);
         assertEquals(expected[3], result[3]);
+    }
+
+    @DisplayName("Encomenda - Deveria retonar código de impossível atender.")
+    @Test
+    void encomendaCombustivelDeveRetornarVetorComCodigoMenosTres(){
+        DepComb deposito = new DepComb(250, 5000, 625, 625);
+
+        int[] result = deposito.encomendaCombustivel(10000, DepComb.TIPOPOSTO.COMUM);
+
+        int[] expected = new int[] {-3};
+
+        assertEquals(expected[0], result[0]);
+    }
+
+    @DisplayName("Encomenda - Deveria retonar vetor com combustivel remanescente na situaçao sobreaviso para posto comum.")
+    @Test
+    void encomendaCombustivelDeveRetornarVetorComCombustivelRemanescenteSobreavisoComum(){
+        DepComb deposito = new DepComb(200, 4000, 500, 500);
+
+        int[] result = deposito.encomendaCombustivel(2000, DepComb.TIPOPOSTO.COMUM);
+
+        int[] expected = new int[] {150, 3300, 375, 375};
+
+        assertEquals(expected[0], result[0]);
+        assertEquals(expected[1], result[1]);
+        assertEquals(expected[2], result[2]);
+        assertEquals(expected[3], result[3]);
+    }
+
+    @DisplayName("Encomenda - Deveria retonar vetor com combustivel remanescente na situaçao sobreaviso para posto estrategico.")
+    @Test
+    void encomendaCombustivelDeveRetornarVetorComCombustivelRemanescenteSobreavisoEstrategico(){
+        DepComb deposito = new DepComb(200, 4000, 500, 500);
+
+        int[] result = deposito.encomendaCombustivel(2000, DepComb.TIPOPOSTO.ESTRATEGICO);
+
+        int[] expected = new int[] {100, 2600, 250, 250};
+
+        assertEquals(expected[0], result[0]);
+        assertEquals(expected[1], result[1]);
+        assertEquals(expected[2], result[2]);
+        assertEquals(expected[3], result[3]);
+    }
+
+    @DisplayName("Encomenda - Deveria retonar código de impossível atender - Sobreaviso")
+    @Test
+    void encomendaCombustivelDeveRetornarVetorComCodigoMenosTresSobreaviso(){
+        DepComb deposito = new DepComb(200, 4000, 500, 500);
+
+        int[] result = deposito.encomendaCombustivel(10000, DepComb.TIPOPOSTO.ESTRATEGICO);
+
+        int[] expected = new int[] {-3};
+
+        assertEquals(expected[0], result[0]);
+    }
+
+    @DisplayName("Encomenda - Deveria retonar código de impossível atender posto comum - Emergencia")
+    @Test
+    void encomendaCombustivelDeveRetornarVetorComCodigoMenosDoisEmergencia(){
+        DepComb deposito = new DepComb(100, 2000, 250, 250);
+
+        int[] result = deposito.encomendaCombustivel(10000, DepComb.TIPOPOSTO.COMUM);
+
+        int[] expected = new int[] {-2};
+
+        assertEquals(expected[0], result[0]);
+    }
+
+    @DisplayName("Encomenda - Deveria retonar vetor com combustivel remanescente na situaçao emergencia para posto estrategico.")
+    @Test
+    void encomendaCombustivelDeveRetornarVetorComCombustivelRemanescenteEmergenciaEstrategico(){
+        DepComb deposito = new DepComb(100, 2000, 250, 250);
+
+        int[] result = deposito.encomendaCombustivel(2000, DepComb.TIPOPOSTO.ESTRATEGICO);
+
+        int[] expected = new int[] {0, 600, 0, 0};
+
+        assertEquals(expected[0], result[0]);
+        assertEquals(expected[1], result[1]);
+        assertEquals(expected[2], result[2]);
+        assertEquals(expected[3], result[3]);
+    }
+
+    @DisplayName("Encomenda - Deveria retonar vetor com combustivel remanescente na situaçao emergencia para posto estrategico (sem aditivo).")
+    @Test
+    void encomendaCombustivelDeveRetornarVetorComCombustivelRemanescenteEmergenciaEstrategicoSemAditivo(){
+        DepComb deposito = new DepComb(20, 2000, 250, 250);
+
+        int[] result = deposito.encomendaCombustivel(2000, DepComb.TIPOPOSTO.ESTRATEGICO);
+
+        int[] expected = new int[] {20, 600, 0, 0};
+
+        assertEquals(expected[0], result[0]);
+        assertEquals(expected[1], result[1]);
+        assertEquals(expected[2], result[2]);
+        assertEquals(expected[3], result[3]);
+    }
+
+    @DisplayName("Encomenda - Deveria retonar código de impossível atender - Emergencia")
+    @Test
+    void encomendaCombustivelDeveRetornarVetorComCodigoMenosTresEmergencia(){
+        DepComb deposito = new DepComb(100, 1200, 250, 250);
+
+        int[] result = deposito.encomendaCombustivel(2000, DepComb.TIPOPOSTO.ESTRATEGICO);
+
+        int[] expected = new int[] {-3};
+
+        assertEquals(expected[0], result[0]);
     }
 
 }

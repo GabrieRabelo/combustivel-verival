@@ -34,7 +34,7 @@ public class DepComb {
 
         if (menor >= 0.5) {
             situacao = SITUACAO.NORMAL;
-        } else  if(menor >= 0.25) {
+        } else if (menor >= 0.25) {
             situacao = SITUACAO.SOBRAVISO;
         } else {
             situacao = SITUACAO.EMERGENCIA;
@@ -43,9 +43,9 @@ public class DepComb {
 
     private double procuraMaisEscasso() {
         List<Double> combustiveis = new ArrayList<>();
-        combustiveis.add((double)tAditivo/MAX_ADITIVO);
-        combustiveis.add((double)tGasolina/MAX_GASOLINA);
-        combustiveis.add((double)(tAlcool1+tAlcool2)/MAX_ALCOOL);
+        combustiveis.add((double) tAditivo / MAX_ADITIVO);
+        combustiveis.add((double) tGasolina / MAX_GASOLINA);
+        combustiveis.add((double) (tAlcool1 + tAlcool2) / MAX_ALCOOL);
         return Collections.min(combustiveis);
     }
 
@@ -113,8 +113,8 @@ public class DepComb {
 
         int tAlcool = tAlcool1 + tAlcool2;
         if (qtdade + tAlcool <= MAX_ALCOOL) {
-            tAlcool1 += (double) qtdade/2;
-            tAlcool2 += (double) qtdade/2;
+            tAlcool1 += (double) qtdade / 2;
+            tAlcool2 += (double) qtdade / 2;
             val = qtdade;
         } else if (qtdade + tAlcool > MAX_ALCOOL) {
             int tAlcoolold = tAlcool1 + tAlcool2;
@@ -128,28 +128,76 @@ public class DepComb {
     public int[] encomendaCombustivel(int qtdade, TIPOPOSTO tipoPosto) {
         int[] erro = new int[1];
         int[] remanescente = new int[4];
-        if(qtdade < 0){
+
+        double qtdadeAditivo = qtdade * 0.05;
+        double qtdadeGasolina = qtdade * 0.7;
+        double qtdadeAlcool = qtdade * 0.25;
+
+        if (qtdade < 0) {
             erro[0] = -1;
             return erro;
         }
-        if(situacao == SITUACAO.NORMAL){
-            double qtdadeAditivo = qtdade * 0.05;
-            double qtdadeGasolina = qtdade * 0.7;
-            double qtdadeAlcool = qtdade * 0.25;
-
-            if((tGasolina - qtdadeGasolina) > 0 && ((tAlcool1 + tAlcool2) - qtdadeAlcool) > 0 && (tAditivo - qtdadeAditivo) > 0) {
+        if (situacao == SITUACAO.NORMAL) {
+            if ((tGasolina - qtdadeGasolina) >= 0 && ((tAlcool1 + tAlcool2) - qtdadeAlcool) >= 0 && (tAditivo - qtdadeAditivo) >= 0) {
                 tAditivo -= qtdadeAditivo;
                 tGasolina -= qtdadeGasolina;
-                tAlcool1 -= qtdadeAlcool/2;
-                tAlcool2 -= qtdadeAlcool/2;
+                tAlcool1 -= qtdadeAlcool / 2;
+                tAlcool2 -= qtdadeAlcool / 2;
                 remanescente[0] = tAditivo;
                 remanescente[1] = tGasolina;
                 remanescente[2] = tAlcool1;
                 remanescente[3] = tAlcool2;
                 return remanescente;
+            } else {
+                erro[0] = -3;
+                return erro;
+            }
+        } else if (situacao == SITUACAO.SOBRAVISO) {
+            if (tipoPosto == TIPOPOSTO.COMUM) {
+                qtdadeAditivo = qtdadeAditivo / 2;
+                qtdadeGasolina = qtdadeGasolina / 2;
+                qtdadeAlcool = qtdadeAlcool / 2;
+            }
+
+            if ((tGasolina - qtdadeGasolina) >= 0 && ((tAlcool1 + tAlcool2) - qtdadeAlcool) >= 0 && (tAditivo - qtdadeAditivo) >= 0) {
+                tAditivo -= qtdadeAditivo;
+                tGasolina -= qtdadeGasolina;
+                tAlcool1 -= qtdadeAlcool / 2;
+                tAlcool2 -= qtdadeAlcool / 2;
+                remanescente[0] = tAditivo;
+                remanescente[1] = tGasolina;
+                remanescente[2] = tAlcool1;
+                remanescente[3] = tAlcool2;
+                return remanescente;
+            } else {
+                erro[0] = -3;
+                return erro;
+            }
+        } else if (situacao == SITUACAO.EMERGENCIA) {
+            if (tipoPosto == TIPOPOSTO.COMUM) {
+                erro[0] = -2;
+                return erro;
+            } else {
+                if ((tGasolina - qtdadeGasolina) >= 0 && ((tAlcool1 + tAlcool2) - qtdadeAlcool) >= 0) {
+                    if (tAditivo - qtdadeAditivo >= 0) {
+                        tAditivo -= qtdadeAditivo;
+                    }
+                    tGasolina -= qtdadeGasolina;
+                    tAlcool1 -= qtdadeAlcool / 2;
+                    tAlcool2 -= qtdadeAlcool / 2;
+                    remanescente[0] = tAditivo;
+                    remanescente[1] = tGasolina;
+                    remanescente[2] = tAlcool1;
+                    remanescente[3] = tAlcool2;
+                    return remanescente;
+                } else {
+                    erro[0] = -3;
+                    return erro;
+                }
             }
         }
 
-        return new int[]{200, 200};
+        erro[0] = -1;
+        return erro;
     }
 }
