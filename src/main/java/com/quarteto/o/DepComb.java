@@ -147,6 +147,8 @@ public class DepComb {
                 remanescente[1] = tGasolina;
                 remanescente[2] = tAlcool1;
                 remanescente[3] = tAlcool2;
+
+                defineSituacao();
                 return remanescente;
             } else {
                 erro[0] = -3;
@@ -168,6 +170,8 @@ public class DepComb {
                 remanescente[1] = tGasolina;
                 remanescente[2] = tAlcool1;
                 remanescente[3] = tAlcool2;
+
+                defineSituacao();
                 return remanescente;
             } else {
                 erro[0] = -3;
@@ -189,6 +193,8 @@ public class DepComb {
                     remanescente[1] = tGasolina;
                     remanescente[2] = tAlcool1;
                     remanescente[3] = tAlcool2;
+
+                    defineSituacao();
                     return remanescente;
                 } else {
                     erro[0] = -3;
