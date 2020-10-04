@@ -13,6 +13,9 @@ public class DepComb {
     public static final int MAX_ADITIVO = 500;
     public static final int MAX_ALCOOL = 2500;
     public static final int MAX_GASOLINA = 10000;
+    public static final double PROPORCAO_ADITIVO = 0.05;
+    public static final double PROPORCAO_GASOLINA = 0.7;
+    public static final double PROPORCAO_ALCOOL = 0.25;
 
     private int tAditivo;
     private int tGasolina;
@@ -129,16 +132,16 @@ public class DepComb {
         int[] erro = new int[1];
         int[] remanescente = new int[4];
 
-        double qtdadeAditivo = qtdade * 0.05;
-        double qtdadeGasolina = qtdade * 0.7;
-        double qtdadeAlcool = qtdade * 0.25;
+        double qtdadeAditivo = qtdade * PROPORCAO_ADITIVO;
+        double qtdadeGasolina = qtdade * PROPORCAO_GASOLINA;
+        double qtdadeAlcool = qtdade * PROPORCAO_ALCOOL;
 
         if (qtdade < 0) {
             erro[0] = -1;
             return erro;
         }
         if (situacao == SITUACAO.NORMAL) {
-            if ((tGasolina - qtdadeGasolina) >= 0 && ((tAlcool1 + tAlcool2) - qtdadeAlcool) >= 0 && (tAditivo - qtdadeAditivo) >= 0) {
+            if (verificaGasolina(qtdadeGasolina) && verificaAlcool(qtdadeAlcool) && verificaAditivo(qtdadeAditivo)) {
                 tAditivo -= qtdadeAditivo;
                 tGasolina -= qtdadeGasolina;
                 tAlcool1 -= qtdadeAlcool / 2;
@@ -161,7 +164,7 @@ public class DepComb {
                 qtdadeAlcool = qtdadeAlcool / 2;
             }
 
-            if ((tGasolina - qtdadeGasolina) >= 0 && ((tAlcool1 + tAlcool2) - qtdadeAlcool) >= 0 && (tAditivo - qtdadeAditivo) >= 0) {
+            if (verificaGasolina(qtdadeGasolina) && verificaAlcool(qtdadeAlcool) && verificaAditivo(qtdadeAditivo)) {
                 tAditivo -= qtdadeAditivo;
                 tGasolina -= qtdadeGasolina;
                 tAlcool1 -= qtdadeAlcool / 2;
@@ -182,8 +185,8 @@ public class DepComb {
                 erro[0] = -2;
                 return erro;
             } else {
-                if ((tGasolina - qtdadeGasolina) >= 0 && ((tAlcool1 + tAlcool2) - qtdadeAlcool) >= 0) {
-                    if (tAditivo - qtdadeAditivo >= 0) {
+                if (verificaGasolina(qtdadeGasolina) && verificaAlcool(qtdadeAlcool)) {
+                    if (verificaAditivo(qtdadeAditivo)) {
                         tAditivo -= qtdadeAditivo;
                     }
                     tGasolina -= qtdadeGasolina;
@@ -205,5 +208,17 @@ public class DepComb {
 
         erro[0] = -1;
         return erro;
+    }
+
+    private boolean verificaGasolina(double qtdadeGasolina) {
+        return tGasolina - qtdadeGasolina >= 0;
+    }
+
+    private boolean verificaAlcool(double qtdadeAlcool) {
+        return (tAlcool1 + tAlcool2) - qtdadeAlcool >= 0;
+    }
+
+    private boolean verificaAditivo(double qtdadeAditivo) {
+        return this.tAditivo - qtdadeAditivo >= 0;
     }
 }
