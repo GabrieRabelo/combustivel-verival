@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static com.quarteto.o.DepComb.SITUACAO.NORMAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * Unit test for simple App.
@@ -251,6 +252,138 @@ class DepCombTest {
         int[] expected = new int[] {-3};
 
         assertEquals(expected[0], result[0]);
+    }
+
+
+    /*Testes valor limite*/
+    @DisplayName("Situacao - Deveria definir situaçao NORMAL com o tanque menos cheio tendo 100% alocado.")
+    @Test
+    void defineSituacaoNormalOnPointCem(){
+        //menor porcentagem no tanque: 100%
+        DepComb deposito = new DepComb(500, 10000, 1250, 1250);
+
+        DepComb.SITUACAO situacao = deposito.getSituacao();
+        assertEquals(DepComb.SITUACAO.NORMAL, situacao);
+    }
+
+    @DisplayName("Situacao - Deveria definir situaçao NORMAL com o tanque menos cheio tendo 50% alocado.")
+    @Test
+    void defineSituacaoNormalOnPointCinquenta(){
+        //menor porcentagem no tanque: 50%
+        DepComb deposito = new DepComb(250, 10000, 1250, 1250);
+
+        DepComb.SITUACAO situacao = deposito.getSituacao();
+        assertEquals(DepComb.SITUACAO.NORMAL, situacao);
+    }
+
+    @DisplayName("Situacao - Deveria definir situaçao NORMAL com o tanque menos cheio tendo 90% alocado.")
+    @Test
+    void defineSituacaoNormalInPoint(){
+        //menor porcentagem no tanque: 90%
+        DepComb deposito = new DepComb(450, 10000, 1250, 1250);
+
+        DepComb.SITUACAO situacao = deposito.getSituacao();
+        assertEquals(DepComb.SITUACAO.NORMAL, situacao);
+    }
+
+    @DisplayName("Situacao - NÃO Deveria definir situaçao NORMAL com o tanque menos cheio tendo 40% alocado.")
+    @Test
+    void defineSituacaoNormalOutPoint(){
+        //menor porcentagem armazenada nos tanques: 40%
+        DepComb deposito = new DepComb(200, 10000, 1250, 1250);
+
+        DepComb.SITUACAO situacao = deposito.getSituacao();
+        assertNotEquals(DepComb.SITUACAO.NORMAL, situacao);
+    }
+
+    @DisplayName("Situacao - NÃO Deveria definir situaçao SOBREAVISO com o tanque menos cheio tendo 50% alocado.")
+    @Test
+    void defineSituacaoSobreavisoOnPointCinquenta(){
+        //menor porcentagem armazenada nos tanques: 50%
+        DepComb deposito = new DepComb(250, 10000, 1250, 1250);
+
+        DepComb.SITUACAO situacao = deposito.getSituacao();
+        assertNotEquals(DepComb.SITUACAO.SOBRAVISO, situacao);
+    }
+
+    @DisplayName("Situacao - Deveria definir situaçao SOBREAVISO com o tanque menos cheio tendo 25% alocado.")
+    @Test
+    void defineSituacaoSobreavisoOnPointVinteCinco(){
+        //menor porcentagem armazenada nos tanques: 25%
+        DepComb deposito = new DepComb(125, 10000, 1250, 1250);
+
+        DepComb.SITUACAO situacao = deposito.getSituacao();
+        assertEquals(DepComb.SITUACAO.SOBRAVISO, situacao);
+    }
+
+    @DisplayName("Situacao - Deveria definir situaçao SOBREAVISO com o tanque menos cheio tendo 40% alocado.")
+    @Test
+    void defineSituacaoSobreavisoInPoint(){
+        //menor porcentagem armazenada nos tanques: 40%
+        DepComb deposito = new DepComb(200, 10000, 1250, 1250);
+
+        DepComb.SITUACAO situacao = deposito.getSituacao();
+        assertEquals(DepComb.SITUACAO.SOBRAVISO, situacao);
+    }
+
+    @DisplayName("Situacao - NÃO Deveria definir situaçao SOBREAVISO com o tanque menos cheio tendo 20% alocado.")
+    @Test
+    void defineSituacaoSobreavisoOutPointBaixo(){
+        //menor porcentagem armazenada nos tanques: 20%
+        DepComb deposito = new DepComb(100, 10000, 1250, 1250);
+
+        DepComb.SITUACAO situacao = deposito.getSituacao();
+        assertNotEquals(DepComb.SITUACAO.SOBRAVISO, situacao);
+    }
+
+    @DisplayName("Situacao - NÃO Deveria definir situaçao SOBREAVISO com o tanque menos cheio tendo 90% alocado.")
+    @Test
+    void defineSituacaoSobreavisoOutPointCima(){
+        //menor porcentagem armazenada nos tanques: 90%
+        DepComb deposito = new DepComb(450, 10000, 1250, 1250);
+
+        DepComb.SITUACAO situacao = deposito.getSituacao();
+        assertNotEquals(DepComb.SITUACAO.SOBRAVISO, situacao);
+    }
+
+    @DisplayName("Situacao - NÃO Deveria definir situaçao EMERGENCIA com o tanque menos cheio tendo 25% alocado.")
+    @Test
+    void defineSituacaoEmergenciaOnPointVinceCinco(){
+        //menor porcentagem armazenada nos tanques: 25%
+        DepComb deposito = new DepComb(125, 10000, 1250, 1250);
+
+        DepComb.SITUACAO situacao = deposito.getSituacao();
+        assertNotEquals(DepComb.SITUACAO.EMERGENCIA, situacao);
+    }
+
+    @DisplayName("Situacao - Deveria definir situaçao EMERGENCIA com o tanque menos cheio tendo 0% alocado.")
+    @Test
+    void defineSituacaoEmergenciaOnPointZero(){
+        //menor porcentagem armazenada nos tanques: 0%
+        DepComb deposito = new DepComb(0, 10000, 1250, 1250);
+
+        DepComb.SITUACAO situacao = deposito.getSituacao();
+        assertEquals(DepComb.SITUACAO.EMERGENCIA, situacao);
+    }
+
+    @DisplayName("Situacao - Deveria definir situaçao EMERGENCIA com o tanque menos cheio tendo 20% alocado.")
+    @Test
+    void defineSituacaoEmergenciaInPoint(){
+        //menor porcentagem armazenada nos tanques: 20%
+        DepComb deposito = new DepComb(100, 10000, 1250, 1250);
+
+        DepComb.SITUACAO situacao = deposito.getSituacao();
+        assertEquals(DepComb.SITUACAO.EMERGENCIA, situacao);
+    }
+
+    @DisplayName("Situacao - Deveria definir situaçao EMERGENCIA com o tanque menos cheio tendo 20% alocado.")
+    @Test
+    void defineSituacaoEmergenciaOutPoint(){
+        //menor porcentagem armazenada nos tanques: 20%
+        DepComb deposito = new DepComb(100, 10000, 1250, 1250);
+
+        DepComb.SITUACAO situacao = deposito.getSituacao();
+        assertEquals(DepComb.SITUACAO.EMERGENCIA, situacao);
     }
 
 }
