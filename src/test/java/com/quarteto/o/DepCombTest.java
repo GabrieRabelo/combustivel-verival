@@ -3,6 +3,8 @@ package com.quarteto.o;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static com.quarteto.o.DepComb.SITUACAO.NORMAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,25 +24,18 @@ class DepCombTest {
     }
 
     @DisplayName("Aditivo - Deveria retornar a quantidade adicionada com sucesso")
-    @Test
-    void recebeAditivoEDeveriaRetornarQuantidade() {
-        DepComb deposito = new DepComb(430, 50, 50, 50);
+    @ParameterizedTest
+    @CsvSource({
+            "430, 50, 50, 480",  // Sem sobrar
+            "400, 150, 100, 500" // Sobrando
+    })
+    void recebeAditivoEDeveriaRetornarQuantidade(int tAditivo, int qtdade, int expected1, int expected2) {
+        DepComb deposito = new DepComb(tAditivo, 50, 50, 50);
 
-        int result = deposito.recebeAditivo(50);
+        int result = deposito.recebeAditivo(qtdade);
 
-        assertEquals(50, result);
-        assertEquals(480, deposito.gettAditivo());
-    }
-
-    @DisplayName("Aditivo - Deveria retornar a quantidade adicionada sem a sobra.")
-    @Test
-    void recebeAditivoEDeveriaRetornarSemASobra() {
-        DepComb deposito = new DepComb(400, 50, 50, 50);
-
-        int result = deposito.recebeAditivo(150);
-
-        assertEquals(100, result);
-        assertEquals(500, deposito.gettAditivo());
+        assertEquals(expected1, result);
+        assertEquals(expected2, deposito.gettAditivo());
     }
 
     @DisplayName("Gasolina - Deveria retornar -1 ao receber quantidade inválida")
@@ -54,25 +49,18 @@ class DepCombTest {
     }
 
     @DisplayName("Gasolina - Deveria retornar a quantidade adicionada com sucesso")
-    @Test
-    void recebeGasolinaEDeveriaRetornarQuantidade() {
-        DepComb deposito = new DepComb(400, 4500, 50, 50);
+    @ParameterizedTest
+    @CsvSource({
+            "4500, 5000, 5000, 9500", // Sem sobrar
+            "6000, 6000, 4000, 10000" // Sobrando
+    })
+    void recebeGasolinaEDeveriaRetornarQuantidade(int tGasolina, int qtdade, int expected1, int expected2) {
+        DepComb deposito = new DepComb(400, tGasolina, 50, 50);
 
-        int result = deposito.recebeGasolina(5000);
+        int result = deposito.recebeGasolina(qtdade);
 
-        assertEquals(5000, result);
-        assertEquals(9500, deposito.gettGasolina());
-    }
-
-    @DisplayName("Gasolina - Deveria retornar a quantidade adicionada sem a sobra.")
-    @Test
-    void recebeGasolinaEDeveriaRetornaSemASobra() {
-        DepComb deposito = new DepComb(400, 6000, 50, 50);
-
-        int result = deposito.recebeGasolina(6000);
-
-        assertEquals(4000, result);
-        assertEquals(10000, deposito.gettGasolina());
+        assertEquals(expected1, result);
+        assertEquals(expected2, deposito.gettGasolina());
     }
 
     @DisplayName("Alcool - Deveria retornar -1 ao receber quantidade inválida")
@@ -86,28 +74,19 @@ class DepCombTest {
     }
 
     @DisplayName("Alcool - Deveria retornar a quantidade adicionada com sucesso")
-    @Test
-    void recebeAlcoolEDeveriaRetornarQuantidade() {
-        DepComb deposito = new DepComb(430, 50, 800, 800);
+    @ParameterizedTest
+    @CsvSource({
+            "800, 100, 100, 850",   // Sem sobrar
+            "1000, 2500, 500, 2500" // Sobrando
+    })
+    void recebeAlcoolEDeveriaRetornarQuantidade(int tAlcool, int qtdade, int expected1, int expected2) {
+        DepComb deposito = new DepComb(430, 50, tAlcool, tAlcool);
 
-        int result = deposito.recebeAlcool(100);
+        int result = deposito.recebeAlcool(qtdade);
 
-        assertEquals(100, result);
-        assertEquals(850, deposito.gettAlcool1());
-        assertEquals(850, deposito.gettAlcool2());
-    }
-
-    @DisplayName("Alcool - Deveria retornar a quantidade adicionada sem a sobra.")
-    @Test
-    void recebeAlcoolEDeveriaRetornaSemASobra() {
-
-        DepComb deposito = new DepComb(400, 6000, 1000, 1000);
-
-        int result = deposito.recebeAlcool(2500);
-
-        assertEquals(500, result);
-        assertEquals(2500, deposito.gettAlcool1());
-        assertEquals(2500, deposito.gettAlcool2());
+        assertEquals(expected1, result);
+        assertEquals(expected2, deposito.gettAlcool1());
+        assertEquals(expected2, deposito.gettAlcool2());
     }
 
     @DisplayName("Define situaçao - Deveria modificar para normal.")

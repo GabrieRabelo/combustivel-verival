@@ -4,8 +4,8 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.mkyong.core</groupId>
-    <artifactId>junit5-maven</artifactId>
+    <groupId>com.quarteto.o.o</groupId>
+    <artifactId>combustivel-verival</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -20,6 +20,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
             <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
