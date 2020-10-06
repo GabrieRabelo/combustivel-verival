@@ -181,8 +181,9 @@ public class DepComb {
 				erro[0] = -3;
 				return erro;
 			}
-		} else if (situacao == SITUACAO.EMERGENCIA) {
-			if (tipoPosto == TIPOPOSTO.COMUM) {
+		}
+
+		if (tipoPosto == TIPOPOSTO.COMUM) {
 				erro[0] = -2;
 				return erro;
 			} else {
@@ -205,10 +206,6 @@ public class DepComb {
 					return erro;
 				}
 			}
-		}
-
-		erro[0] = -1;
-		return erro;
 	}
 
 	private boolean verificaGasolina(double qtdadeGasolina) {
