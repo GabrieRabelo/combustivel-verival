@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static com.quarteto.o.DepComb.SITUACAO.NORMAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * Unit test for simple App.
@@ -90,82 +88,56 @@ class DepCombTest {
         assertEquals(expected2, deposito.gettAlcool2());
     }
 
-    @DisplayName("Define situaçao - Deveria modificar para normal.")
-    @Test
-    void defineSituacaoDeveriaModificarParaNormal(){
+    @DisplayName("Define situaçao - Deveria modificar as situações.")
+    @ParameterizedTest
+    @CsvSource({
+            "8000, NORMAL",
+            "4500, SOBRAVISO",
+            "2000, EMERGENCIA"
+    })
+    void defineSituacaoDeveriaModificarSituacao(int tGasolina, DepComb.SITUACAO situacao){
 
-        DepComb deposito = new DepComb(450, 8000, 750, 750);
+        DepComb deposito = new DepComb(450, tGasolina, 750, 750);
 
-        var situacao = deposito.getSituacao();
-        assertEquals(NORMAL, situacao);
+        var result = deposito.getSituacao();
+        assertEquals(situacao, result);
     }
 
-    @DisplayName("Define situaçao - Deveria modificar para sobreaviso.")
-    @Test
-    void defineSituacaoDeveriaModificarParaSobreaviso(){
+    @DisplayName("Encomenda - Deveria retonar vetor com código de erro.")
+    @ParameterizedTest
+    @CsvSource({
+            "400, 8000, 1000, -1, -1, COMUM",           // erro -1 - Quantidade inválida
+            "250, 5000, 625, 10000, -3, COMUM",         // erro -3 - Impossível atender quantidade maior que o que tem disponível
+            "200, 4000, 400, 10000, -3, ESTRATEGICO",   // erro -3 - Impossível atender quantidade maior que o que tem disponível (SOBRAVISO)
+            "100, 1200, 250, 2000, -3, ESTRATEGICO",    // erro -3 - Impossível atender quantidade maior que o que tem disponível (EMERGENCIA)
+            "100, 2000, 250, 10000, -2, COMUM",         // erro -2 - Impossível atender posto comum situação emergencia
+    })
+    void encomendaCombustivelDeveRetornarVetorComCodigoDeErro(int tAditivo, int tGasolina, int tAlcool, int qtdade, int erro,
+                                                               DepComb.TIPOPOSTO tipoposto){
+        DepComb deposito = new DepComb(tAditivo, tGasolina, tAlcool, tAlcool);
 
-        DepComb deposito = new DepComb(450, 4500, 750, 750);
+        int[] result = deposito.encomendaCombustivel(qtdade, tipoposto);
 
-        var situacao = deposito.getSituacao();
-        assertEquals(DepComb.SITUACAO.SOBRAVISO, situacao);
-    }
-
-    @DisplayName("Define situaçao - Deveria modificar para emergencia.")
-    @Test
-    void defineSituacaoDeveriaModificarParaEmergencia(){
-
-        DepComb deposito = new DepComb(450, 2000, 750, 750);
-
-        var situacao = deposito.getSituacao();
-        assertEquals(DepComb.SITUACAO.EMERGENCIA, situacao);
-    }
-
-    @DisplayName("Encomenda - Deveria retonar código de erro -1.")
-    @Test
-    void encomendaCombustivelDeveRetornarVetorComCodigoMenosUm(){
-        DepComb deposito = new DepComb(400, 8000, 1000, 1000);
-
-        int[] result = deposito.encomendaCombustivel(-1, DepComb.TIPOPOSTO.COMUM);
-
-        int[] expected = new int[] {-1};
+        int[] expected = new int[] {erro};
         assertEquals(expected[0], result[0]);
     }
 
     @DisplayName("Encomenda - Deveria retonar vetor com combustivel remanescente.")
-    @Test
-    void encomendaCombustivelDeveRetornarVetorComCombustivelRemanescente(){
-        DepComb deposito = new DepComb(400, 8000, 1000, 1000);
+    @ParameterizedTest
+    @CsvSource({
+            "400, 8000, 1000, 300, 6600, 750, COMUM",       // situação NORMAL     -- 100%
+            "200, 4000, 500, 150, 3300, 375, COMUM",        // situação SOBRAVISO  -- 50%
+            "200, 4000, 500, 100, 2600, 250, ESTRATEGICO",  // situação SOBRAVISO  -- 100%
+            "100, 2000, 250, 0, 600, 0, ESTRATEGICO",       // situação EMERGENCIA -- 100%
+            "20, 2000, 250, 20, 600, 0, ESTRATEGICO"       // situação EMERGENCIA (sem aditivo)
+    })
+    void encomendaCombustivelDeveRetornarVetorComCombustivelRemanescente(int tAditivo, int tGasolina, int tAlcool, int expected1, int expected2,
+                                                                         int expected3 , DepComb.TIPOPOSTO tipoposto){
+        DepComb deposito = new DepComb(tAditivo, tGasolina, tAlcool, tAlcool);
 
-        int[] result = deposito.encomendaCombustivel(2000, DepComb.TIPOPOSTO.COMUM);
+        int[] result = deposito.encomendaCombustivel(2000, tipoposto);
 
-        int[] expected = new int[] {300, 6600, 750, 750};
-
-        assertEquals(expected[0], result[0]);
-        assertEquals(expected[1], result[1]);
-        assertEquals(expected[2], result[2]);
-        assertEquals(expected[3], result[3]);
-    }
-
-    @DisplayName("Encomenda - Deveria retonar código de impossível atender.")
-    @Test
-    void encomendaCombustivelDeveRetornarVetorComCodigoMenosTres(){
-        DepComb deposito = new DepComb(250, 5000, 625, 625);
-
-        int[] result = deposito.encomendaCombustivel(10000, DepComb.TIPOPOSTO.COMUM);
-
-        int[] expected = new int[] {-3};
-
-        assertEquals(expected[0], result[0]);
-    }
-
-    @DisplayName("Encomenda - Deveria retonar vetor com combustivel remanescente na situaçao sobreaviso para posto comum.")
-    @Test
-    void encomendaCombustivelDeveRetornarVetorComCombustivelRemanescenteSobreavisoComum(){
-        DepComb deposito = new DepComb(200, 4000, 500, 500);
-
-        int[] result = deposito.encomendaCombustivel(2000, DepComb.TIPOPOSTO.COMUM);
-
-        int[] expected = new int[] {150, 3300, 375, 375};
+        int[] expected = new int[] {expected1, expected2, expected3, expected3};
 
         assertEquals(expected[0], result[0]);
         assertEquals(expected[1], result[1]);
@@ -173,217 +145,24 @@ class DepCombTest {
         assertEquals(expected[3], result[3]);
     }
 
-    @DisplayName("Encomenda - Deveria retonar vetor com combustivel remanescente na situaçao sobreaviso para posto estrategico.")
-    @Test
-    void encomendaCombustivelDeveRetornarVetorComCombustivelRemanescenteSobreavisoEstrategico(){
-        DepComb deposito = new DepComb(200, 4000, 500, 500);
+    /*Teste valor limite*/
 
-        int[] result = deposito.encomendaCombustivel(2000, DepComb.TIPOPOSTO.ESTRATEGICO);
-
-        int[] expected = new int[] {100, 2600, 250, 250};
-
-        assertEquals(expected[0], result[0]);
-        assertEquals(expected[1], result[1]);
-        assertEquals(expected[2], result[2]);
-        assertEquals(expected[3], result[3]);
-    }
-
-    @DisplayName("Encomenda - Deveria retonar código de impossível atender - Sobreaviso")
-    @Test
-    void encomendaCombustivelDeveRetornarVetorComCodigoMenosTresSobreaviso(){
-        DepComb deposito = new DepComb(200, 4000, 500, 500);
-
-        int[] result = deposito.encomendaCombustivel(10000, DepComb.TIPOPOSTO.ESTRATEGICO);
-
-        int[] expected = new int[] {-3};
-
-        assertEquals(expected[0], result[0]);
-    }
-
-    @DisplayName("Encomenda - Deveria retonar código de impossível atender posto comum - Emergencia")
-    @Test
-    void encomendaCombustivelDeveRetornarVetorComCodigoMenosDoisEmergencia(){
-        DepComb deposito = new DepComb(100, 2000, 250, 250);
-
-        int[] result = deposito.encomendaCombustivel(10000, DepComb.TIPOPOSTO.COMUM);
-
-        int[] expected = new int[] {-2};
-
-        assertEquals(expected[0], result[0]);
-    }
-
-    @DisplayName("Encomenda - Deveria retonar vetor com combustivel remanescente na situaçao emergencia para posto estrategico.")
-    @Test
-    void encomendaCombustivelDeveRetornarVetorComCombustivelRemanescenteEmergenciaEstrategico(){
-        DepComb deposito = new DepComb(100, 2000, 250, 250);
-
-        int[] result = deposito.encomendaCombustivel(2000, DepComb.TIPOPOSTO.ESTRATEGICO);
-
-        int[] expected = new int[] {0, 600, 0, 0};
-
-        assertEquals(expected[0], result[0]);
-        assertEquals(expected[1], result[1]);
-        assertEquals(expected[2], result[2]);
-        assertEquals(expected[3], result[3]);
-    }
-
-    @DisplayName("Encomenda - Deveria retonar vetor com combustivel remanescente na situaçao emergencia para posto estrategico (sem aditivo).")
-    @Test
-    void encomendaCombustivelDeveRetornarVetorComCombustivelRemanescenteEmergenciaEstrategicoSemAditivo(){
-        DepComb deposito = new DepComb(20, 2000, 250, 250);
-
-        int[] result = deposito.encomendaCombustivel(2000, DepComb.TIPOPOSTO.ESTRATEGICO);
-
-        int[] expected = new int[] {20, 600, 0, 0};
-
-        assertEquals(expected[0], result[0]);
-        assertEquals(expected[1], result[1]);
-        assertEquals(expected[2], result[2]);
-        assertEquals(expected[3], result[3]);
-    }
-
-    @DisplayName("Encomenda - Deveria retonar código de impossível atender - Emergencia")
-    @Test
-    void encomendaCombustivelDeveRetornarVetorComCodigoMenosTresEmergencia(){
-        DepComb deposito = new DepComb(100, 1200, 250, 250);
-
-        int[] result = deposito.encomendaCombustivel(2000, DepComb.TIPOPOSTO.ESTRATEGICO);
-
-        int[] expected = new int[] {-3};
-
-        assertEquals(expected[0], result[0]);
-    }
-
-
-    /*Testes valor limite*/
-    @DisplayName("Situacao - Deveria definir situaçao NORMAL com o tanque menos cheio tendo 100% alocado.")
-    @Test
-    void defineSituacaoNormalOnPointCem(){
+    @DisplayName("Situacao - Deveria definir situaçao para os valores limites.")
+    @ParameterizedTest
+    @CsvSource({
+            "500, NORMAL",      // 100% - On point NORMAL
+            "250, NORMAL",      // 50% - On point NORMAL || On point SOBRAVISO ??
+            "450, NORMAL",      // 90% - In point NORMAL || Outpoint SOBRAVISO
+            "200, SOBRAVISO",   // 40% - Out point  NORMAL || In point SOBRAVISO
+            "125, SOBRAVISO",   // 25% - On point SOBRAVISO || On point EMERGENCIA ??
+            "100, EMERGENCIA",  // 20% - Out point SOBRAVISO || In point EMERGENCIA
+            "0, EMERGENCIA"     // 0% - On point EMERGENCIA
+    })
+    void defineSituacaoNormalValoresLimites(int tAditivo, DepComb.SITUACAO situacao) {
         //menor porcentagem no tanque: 100%
-        DepComb deposito = new DepComb(500, 10000, 1250, 1250);
+        DepComb deposito = new DepComb(tAditivo, 10000, 1250, 1250);
 
-        DepComb.SITUACAO situacao = deposito.getSituacao();
-        assertEquals(DepComb.SITUACAO.NORMAL, situacao);
+        DepComb.SITUACAO result = deposito.getSituacao();
+        assertEquals(situacao, result);
     }
-
-    @DisplayName("Situacao - Deveria definir situaçao NORMAL com o tanque menos cheio tendo 50% alocado.")
-    @Test
-    void defineSituacaoNormalOnPointCinquenta(){
-        //menor porcentagem no tanque: 50%
-        DepComb deposito = new DepComb(250, 10000, 1250, 1250);
-
-        DepComb.SITUACAO situacao = deposito.getSituacao();
-        assertEquals(DepComb.SITUACAO.NORMAL, situacao);
-    }
-
-    @DisplayName("Situacao - Deveria definir situaçao NORMAL com o tanque menos cheio tendo 90% alocado.")
-    @Test
-    void defineSituacaoNormalInPoint(){
-        //menor porcentagem no tanque: 90%
-        DepComb deposito = new DepComb(450, 10000, 1250, 1250);
-
-        DepComb.SITUACAO situacao = deposito.getSituacao();
-        assertEquals(DepComb.SITUACAO.NORMAL, situacao);
-    }
-
-    @DisplayName("Situacao - NÃO Deveria definir situaçao NORMAL com o tanque menos cheio tendo 40% alocado.")
-    @Test
-    void defineSituacaoNormalOutPoint(){
-        //menor porcentagem armazenada nos tanques: 40%
-        DepComb deposito = new DepComb(200, 10000, 1250, 1250);
-
-        DepComb.SITUACAO situacao = deposito.getSituacao();
-        assertNotEquals(DepComb.SITUACAO.NORMAL, situacao);
-    }
-
-    @DisplayName("Situacao - NÃO Deveria definir situaçao SOBREAVISO com o tanque menos cheio tendo 50% alocado.")
-    @Test
-    void defineSituacaoSobreavisoOnPointCinquenta(){
-        //menor porcentagem armazenada nos tanques: 50%
-        DepComb deposito = new DepComb(250, 10000, 1250, 1250);
-
-        DepComb.SITUACAO situacao = deposito.getSituacao();
-        assertNotEquals(DepComb.SITUACAO.SOBRAVISO, situacao);
-    }
-
-    @DisplayName("Situacao - Deveria definir situaçao SOBREAVISO com o tanque menos cheio tendo 25% alocado.")
-    @Test
-    void defineSituacaoSobreavisoOnPointVinteCinco(){
-        //menor porcentagem armazenada nos tanques: 25%
-        DepComb deposito = new DepComb(125, 10000, 1250, 1250);
-
-        DepComb.SITUACAO situacao = deposito.getSituacao();
-        assertEquals(DepComb.SITUACAO.SOBRAVISO, situacao);
-    }
-
-    @DisplayName("Situacao - Deveria definir situaçao SOBREAVISO com o tanque menos cheio tendo 40% alocado.")
-    @Test
-    void defineSituacaoSobreavisoInPoint(){
-        //menor porcentagem armazenada nos tanques: 40%
-        DepComb deposito = new DepComb(200, 10000, 1250, 1250);
-
-        DepComb.SITUACAO situacao = deposito.getSituacao();
-        assertEquals(DepComb.SITUACAO.SOBRAVISO, situacao);
-    }
-
-    @DisplayName("Situacao - NÃO Deveria definir situaçao SOBREAVISO com o tanque menos cheio tendo 20% alocado.")
-    @Test
-    void defineSituacaoSobreavisoOutPointBaixo(){
-        //menor porcentagem armazenada nos tanques: 20%
-        DepComb deposito = new DepComb(100, 10000, 1250, 1250);
-
-        DepComb.SITUACAO situacao = deposito.getSituacao();
-        assertNotEquals(DepComb.SITUACAO.SOBRAVISO, situacao);
-    }
-
-    @DisplayName("Situacao - NÃO Deveria definir situaçao SOBREAVISO com o tanque menos cheio tendo 90% alocado.")
-    @Test
-    void defineSituacaoSobreavisoOutPointCima(){
-        //menor porcentagem armazenada nos tanques: 90%
-        DepComb deposito = new DepComb(450, 10000, 1250, 1250);
-
-        DepComb.SITUACAO situacao = deposito.getSituacao();
-        assertNotEquals(DepComb.SITUACAO.SOBRAVISO, situacao);
-    }
-
-    @DisplayName("Situacao - NÃO Deveria definir situaçao EMERGENCIA com o tanque menos cheio tendo 25% alocado.")
-    @Test
-    void defineSituacaoEmergenciaOnPointVinceCinco(){
-        //menor porcentagem armazenada nos tanques: 25%
-        DepComb deposito = new DepComb(125, 10000, 1250, 1250);
-
-        DepComb.SITUACAO situacao = deposito.getSituacao();
-        assertNotEquals(DepComb.SITUACAO.EMERGENCIA, situacao);
-    }
-
-    @DisplayName("Situacao - Deveria definir situaçao EMERGENCIA com o tanque menos cheio tendo 0% alocado.")
-    @Test
-    void defineSituacaoEmergenciaOnPointZero(){
-        //menor porcentagem armazenada nos tanques: 0%
-        DepComb deposito = new DepComb(0, 10000, 1250, 1250);
-
-        DepComb.SITUACAO situacao = deposito.getSituacao();
-        assertEquals(DepComb.SITUACAO.EMERGENCIA, situacao);
-    }
-
-    @DisplayName("Situacao - Deveria definir situaçao EMERGENCIA com o tanque menos cheio tendo 20% alocado.")
-    @Test
-    void defineSituacaoEmergenciaInPoint(){
-        //menor porcentagem armazenada nos tanques: 20%
-        DepComb deposito = new DepComb(100, 10000, 1250, 1250);
-
-        DepComb.SITUACAO situacao = deposito.getSituacao();
-        assertEquals(DepComb.SITUACAO.EMERGENCIA, situacao);
-    }
-
-    @DisplayName("Situacao - Deveria definir situaçao EMERGENCIA com o tanque menos cheio tendo 20% alocado.")
-    @Test
-    void defineSituacaoEmergenciaOutPoint(){
-        //menor porcentagem armazenada nos tanques: 20%
-        DepComb deposito = new DepComb(100, 10000, 1250, 1250);
-
-        DepComb.SITUACAO situacao = deposito.getSituacao();
-        assertEquals(DepComb.SITUACAO.EMERGENCIA, situacao);
-    }
-
 }
